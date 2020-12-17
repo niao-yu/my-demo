@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>文字背景渐变(彩色文字)</title>
+<style>
+  html {
+    /* background: #000; */
+  }
+
+  .text1 {
+    margin: 60px auto;
+    font-size: 120px;
+    text-align: center;
+    font-weight: bold;
+    background: -webkit-gradient(linear, 30% 20%, 80% 80%, from(blue), to(red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text2 {
+    margin: 60px auto;
+    font-size: 120px;
+    text-align: center;
+    font-weight: bold;
+    background: url('./bg.png') no-repeat  center center;
+    background-size: cover;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
+</head>
+<body>
+    <div class="text1">文字颜色-渐变</div>
+    <div class="text2">文字遮罩-照片</div>
+</body>
+</html>

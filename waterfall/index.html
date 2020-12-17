@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>css-瀑布流布局</title>
+  <style>
+    html,
+    body,
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    .waterfall-container {
+      /*分几列*/
+      -moz-column-count: 3;
+      /* Firefox */
+      -webkit-column-count: 3;
+      /* Safari 和 Chrome */
+      column-count: 3;
+      -moz-column-gap: 10px;
+      /* Firefox */
+      -webkit-column-gap: 10px;
+      /* Safari 和 Chrome */
+      column-gap: 10px;
+      /* 行列距 */
+    }
+
+    .waterfall-item {
+      /*不留白，不知道什么意思可以取消这个样式试试*/
+      break-inside: avoid;
+      background-color: #aaa;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <p>不支持ie,适用于移动端</p>
+  <div class="waterfall-container">
+    <div class="waterfall-item"></div>
+  </div>
+</body>
+
+</html>
+<script>
+  var div = '<div class="waterfall-item"></div>'
+  var divs = ''
+  for (var i = 0; i < 20; i++) {
+    var height = Math.ceil(Math.random() * 100) + 10
+    console.log(height)
+    divs += '<div class="waterfall-item" style="height:' + height + 'px;"></div>'
+  }
+  document.querySelector('.waterfall-container').innerHTML = divs
+</script>

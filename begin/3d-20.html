@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>3D多边形</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    body {
+      height: 100%;
+      background-color: #000820;
+      overflow: hidden;
+      cursor: move;
+    }
+
+    .big {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      margin-left: -100px;
+    }
+
+    .big ul {
+      position: relative;
+      transform-style: preserve-3D;
+      transform-origin: 100px 259.8px;
+      background-color: #fff;
+      user-select: none;
+      /*transform: rotateX(37deg)!* rotateY(10deg) rotateZ(10deg)*!;*/
+    }
+
+    .big ul li {
+      list-style: none;
+      /*li三角的边长为200*/
+      border-width: 173.2px 100px;
+      position: absolute;
+      border-color: transparent;
+      border-bottom-color: #00ffff;
+      border-style: solid;
+      transform-origin: bottom;
+      opacity: 0.8;
+    }
+
+    .big ul li:nth-child(1) {
+      transform: translateZ(137.36px) rotateX(-10.55deg);
+      border-bottom-color: #00ffff;
+    }
+
+    .big ul li:nth-child(2) {
+      transform: rotateY(72deg) translateZ(137.36px) rotateX(-10.55deg);
+      border-bottom-color: #68c4ff;
+    }
+
+    .big ul li:nth-child(3) {
+      transform: rotateY(144deg) translateZ(137.36px) rotateX(-10.55deg);
+      border-bottom-color: #e783ff;
+    }
+
+    .big ul li:nth-child(4) {
+      transform: rotateY(216deg) translateZ(137.36px) rotateX(-10.55deg);
+      border-bottom-color: #ff8582;
+    }
+
+    .big ul li:nth-child(5) {
+      transform: rotateY(288deg) translateZ(137.36px) rotateX(-10.55deg);
+      border-bottom-color: #ffe06f;
+    }
+
+    .big ul li:nth-child(6) {
+      transform: rotateZ(180deg) rotateY(36deg) translateZ(170px) rotateX(-10.55deg) translateY(170px);
+      border-bottom-color: #52ff44;
+    }
+
+    .big ul li:nth-child(7) {
+      transform: rotateZ(180deg) rotateY(108deg) translateZ(170px) rotateX(-10.55deg) translateY(170px);
+      border-bottom-color: #ffc0ae;
+    }
+
+    .big ul li:nth-child(8) {
+      transform: rotateZ(180deg) rotateY(180deg) translateZ(170px) rotateX(-10.55deg) translateY(170px);
+      border-bottom-color: #8efcff;
+    }
+
+    .big ul li:nth-child(9) {
+      transform: rotateZ(180deg) rotateY(252deg) translateZ(170px) rotateX(-10.55deg) translateY(170px);
+      border-bottom-color: #c742ff;
+    }
+
+    .big ul li:nth-child(10) {
+      transform: rotateZ(180deg) rotateY(324deg) translateZ(170px) rotateX(-10.55deg) translateY(170px);
+      border-bottom-color: #fff250;
+    }
+
+    .big ul li:nth-child(11) {
+      transform: rotateY(36deg) translateY(-166px) translateZ(137.36px) rotateX(52.47deg);
+      border-bottom-color: #96ff74;
+    }
+
+    .big ul li:nth-child(12) {
+      transform: rotateY(108deg) translateY(-166px) translateZ(137.36px) rotateX(52.47deg);
+      border-bottom-color: #ff9d61;
+    }
+
+    .big ul li:nth-child(13) {
+      transform: rotateY(180deg) translateY(-166px) translateZ(137.36px) rotateX(52.47deg);
+      border-bottom-color: #f9ffbb;
+    }
+
+    .big ul li:nth-child(14) {
+      transform: rotateY(252deg) translateY(-166px) translateZ(137.36px) rotateX(52.47deg);
+      border-bottom-color: #83d4ff;
+    }
+
+    .big ul li:nth-child(15) {
+      transform: rotateY(324deg) translateY(-166px) translateZ(137.36px) rotateX(52.47deg);
+      border-bottom-color: #f984ff;
+    }
+
+    .big ul li:nth-child(16) {
+      transform: rotateY(0deg) translateZ(137.36px) rotateZ(180deg) rotateX(52.47deg);
+      border-bottom-color: #c7ffb1;
+    }
+
+    .big ul li:nth-child(17) {
+      transform: rotateY(72deg) translateZ(137.36px) rotateZ(180deg) rotateX(52.47deg);
+      border-bottom-color: #67bfff;
+    }
+
+    .big ul li:nth-child(18) {
+      transform: rotateY(144deg) translateZ(137.36px) rotateZ(180deg) rotateX(52.47deg);
+      border-bottom-color: #ff94e2;
+    }
+
+    .big ul li:nth-child(19) {
+      transform: rotateY(216deg) translateZ(137.36px) rotateZ(180deg) rotateX(52.47deg);
+      border-bottom-color: #ffc79d;
+    }
+
+    .big ul li:nth-child(20) {
+      transform: rotateY(288deg) translateZ(137.36px) rotateZ(180deg) rotateX(52.47deg);
+      border-bottom-color: #feff98;
+    }
+  </style>
+  <script>
+    window.onload = function () {
+      var big = document.querySelector("ul");
+      var theX = 0;  //用来记录x和y轴的角度，每次拖动完毕后更新
+      var theY = 0;  // （接上一行）这样就不用了每次想办法获取角度了
+      var xx;  //下面用来保存鼠标拖动时的x轴向位置
+      var yy;  //下面用来保存鼠标拖动时的y轴向位置
+      // 鼠标按下
+      document.onmousedown = function (event) {
+        // 获取点击时，鼠标的x和y轴坐标
+        var x = event.pageX;
+        var y = event.pageY;
+        //获取拖动前，盒子的x和y轴角度，用来累加角度
+        var xxx = theX;
+        var yyy = theY;
+        // 鼠标按下时移动，就是拖动
+        document.onmousemove = function (e) {
+          //实时获取鼠标x和y轴的位置
+          xx = e.pageX;
+          yy = e.pageY;
+          //   一个判断，比如盒子转了180度，此时旋转的角度需要相反一下，看着才是正常的。。。可以去掉语句，改成和下面一条的一样的样子试试
+          //而且X轴不知道为什么是固定的，所以X轴的不用管
+          var tempY = Math.abs(yyy) % 360;
+          if (0 <= tempY && tempY < 90 || 270 < tempY && tempY < 360) {
+            xx = xxx + (xx - x) / 2;
+          }
+          else {
+            // 计算实时的角度
+            xx = xxx - (xx - x) / 2;
+          }
+          // 计算实时的角度
+          yy = yyy - (yy - y) / 2;
+          big.style.transform = "rotateX(" + yy + "deg) rotateY(" + xx + "deg )";
+        }
+      }
+      //鼠标弹起事件
+      document.onmouseup = function () {
+        document.onmousemove = null;
+        // 更新盒子此时的角度，用于下一次拖动累加
+        theX = xx;
+        theY = yy;
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div class="big">
+    <ul>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </div>
+</body>
+
+</html>

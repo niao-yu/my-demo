@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>字母数字等宽字体</title>
+  <style>
+    @font-face {
+      font-family: aequilate;
+      src: url('./DejaVu Sans.ttf'); /* IE9+ */
+      font-weight: 100;
+    }
+    @font-face {
+      font-family: aequilate2;
+      src: url('./aequilate-font.woff2'); /* IE9+ */
+      font-weight: 100;
+    }
+    .aequilate {
+      font-family: aequilate;
+    }
+    .aequilate2 {
+      font-family: aequilate2;
+    }
+    .monospace {
+      font-family: monospace;
+    }
+    table td {
+      border: 1px solid #aaa;
+      width: 200px;
+      text-align: right;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <h4>普通字体</h4>
+  <table>
+    <tr>
+      <td>23121134.23423</td>
+      <td>234234.23423</td>
+      <td>132416.98234</td>
+      <td>9999999.00002</td>
+    </tr>
+    <tr>
+      <td>111111.20134</td>
+      <td>351134100.12989</td>
+      <td>120983497135.12234</td>
+      <td>1353450.11113</td>
+    </tr>
+    <tr>
+      <td>345.24246</td>
+      <td>121.43134</td>
+      <td>345261.26436</td>
+      <td>324560134.20134</td>
+    </tr>
+  </table>
+  <br>
+  <hr>
+  <h4>使用等宽字体</h4>
+  <table class="monospace">
+    <tr>
+      <td>23121134.23423</td>
+      <td>234234.23423</td>
+      <td>132416.98234</td>
+      <td>9999999.00002</td>
+    </tr>
+    <tr>
+      <td>111111.20134</td>
+      <td>351134100.12989</td>
+      <td>120983497135.12234</td>
+      <td>1353450.11113</td>
+    </tr>
+    <tr>
+      <td>345.24246</td>
+      <td>121.43134</td>
+      <td>345261.26436</td>
+      <td>324560134.20134</td>
+    </tr>
+  </table>
+  <br>
+  <hr>
+  <h4>使用自己下载的等宽字体文件</h4>
+  <table class="aequilate">
+    <tr>
+      <td>23121134.23423</td>
+      <td>234234.23423</td>
+      <td>132416.98234</td>
+      <td>9999999.00002</td>
+    </tr>
+    <tr>
+      <td>111111.20134</td>
+      <td>351134100.12989</td>
+      <td>120983497135.12234</td>
+      <td>1353450.11113</td>
+    </tr>
+    <tr>
+      <td>345.24246</td>
+      <td>121.43134</td>
+      <td>345261.26436</td>
+      <td>324560134.20134</td>
+    </tr>
+  </table>
+  <br>
+  <hr>
+  <h4>另一个使用自己下载的等宽字体文件</h4>
+  <table class="aequilate2">
+    <tr>
+      <td>23121134.23423</td>
+      <td>234234.23423</td>
+      <td>132416.98234</td>
+      <td>9999999.00002</td>
+    </tr>
+    <tr>
+      <td>111111.20134</td>
+      <td>351134100.12989</td>
+      <td>120983497135.12234</td>
+      <td>1353450.11113</td>
+    </tr>
+    <tr>
+      <td>345.24246</td>
+      <td>121.43134</td>
+      <td>345261.26436</td>
+      <td>324560134.20134</td>
+    </tr>
+  </table>
+</body>
+</html>

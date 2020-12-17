@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>小球实验</title>
+    <style>
+        .box {
+            width: 50px;
+            height: 50px;
+            background-color: skyblue;
+            margin: 10px;
+            border-radius: 50%;
+            position: relative;
+            left:0px;
+        }
+    </style>
+</head>
+<body>
+<button>开始或加速</button>
+<button>减速或停止</button>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+</body>
+<script>
+
+    var rate = 1; //自增的速度
+    var most = 35; //最大速度，开始减速时的速度
+    var btnArr = document.getElementsByTagName("button");
+    var box = document.getElementsByClassName("box");
+    var a = [];  // 速度
+    var b = true;  //用于记录是否为最初的启动，需要的话，则需要设置时间间隔，逐个启动
+    var c = [];  // 位移
+    var d = []; //用于判断是否出触发了清除定时器的指令
+    var bool = [];  //判断速度a是否大于most或者小于-most
+    var count = 0;  //计数器，用于记录“开始或加速”被按下的次数。
+    btnArr[0].onclick = function () {
+        // 判读是否为最初的启动，是的话，需要设置时间间隔
+        if (b) {
+            for (var i = 0; i < box.length;i++) {
+                setTimeout("fn("+i+")",i*100);
+            }
+        }else {  // 不是最初的启动，不需要设置时间间隔，只需增加一组计数器，用来再启动或加速
+            for (var i = 0; i < box.length;i++) {
+                fn(i);
+            }
+        }
+        count++; // 被按下一次按钮，自增
+    }
+    btnArr[1].onclick = function () {
+        //  判断计数器是否为0，是的话说明此时为静止状态，什么也不做
+        if (count === 0) {
+            return;
+        }else { // 不是静止状态，则计数器自减去，同时停止一组定时器，用于减速
+            count--;
+            for (var i = 0;i < box.length; i++){    // 用于停止一组定时器
+                d[i] = true;
+            }
+        }
+    }
+    function fn (temp) {
+        //  判断a数组的长度是否等于盒子的数量，如果相等，说明不是最初的启动，不用再赋值。
+        if (a.length < box.length) {
+            a[a.length] = 0;
+            c[c.length] = 0;
+            bool[bool.length] = true;
+            d[d.length] = false;
+            b = false;
+        }
+        var timer;
+        timer = setInterval(function() {
+            //  判断a的大小，如果小于most，则一直自增，直到大于most，开始自减，直到a小于-most，则再开始自增
+            if (bool[temp]) {
+                a[temp] += rate;
+                if (a[temp] > most) {
+                    bool[temp] = false;
+                }
+            }else {
+                a[temp] -= rate;
+                if (a[temp] < -most) {
+                    bool[temp] = true;
+                }
+            }
+            // 定义盒子的横坐标c为每次加a
+            c[temp] += a[temp] ;
+            box[temp].style.left = c[temp] + "px";
+            //判断d的值，如果为true，说明按下了“停止或加速”，则关闭一组定时器
+            if (d[temp]) {
+                clearInterval(timer);
+                d[temp] = false;    //停止这一组的这个定时器后，再改回false
+            }
+        },15);
+    }
+</script>
+</html>

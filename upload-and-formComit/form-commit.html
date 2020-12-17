@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>提交表单</title>
+  <style lang="en">
+    label {
+      display: block;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <!-- 注意，每个input，都写上name这个属性并赋值 -->
+    <label>输入框 <input type="text" name="username1"></label>
+    <label>输入框 <input type="text" name="username2"></label>
+    <label>输入框 <input type="text" name="username3"></label>
+    <label>输入框 <input type="text" name="username4"></label>
+    <label>图片 <input type="file" name="username5"></label>
+    <button type="submit">提交</button>
+  </form>
+  <div id="a"></div>
+</body>
+<script src="./assets/jquery-3.3.1.min.js"></script>
+<script>
+  //表单被提交的事件
+  $('form').submit(function(event){
+    //阻止表单提交的默认事件，否则直接就提交了
+    event.preventDefault();
+    // var arr = $('form').serializeArray();
+    var obj = {};
+    var name = $(this).find('[name]');
+    $.each(name,function(k,v){
+      obj[v.name] = v.value;
+    });
+    // $.each(arr,function(k,v){
+    //   obj[v.name] = v.value;
+    // });
+    // console.log(obj);
+    $.ajax({
+      data: obj,
+      type: 'post',
+      url: './00.php',
+      success: function(data){
+        data = JSON.parse(data)
+        console.log(data);
+        var img = new Image();
+        img.src = data.username5;
+        $('#a').html(img);
+      },
+      error: function(data){
+        data = JSON.parse(data)
+        console.log(data);
+      }
+    });
+  });
+</script>
+</html>

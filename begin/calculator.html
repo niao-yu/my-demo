@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>计算器</title>
+	<style type="text/css">
+		body {
+			background-color: #eff;
+		}
+		table {
+			border-collapse: collapse;
+			font-size: 1.2em;
+			float: left;
+		}
+		td {
+			padding: 0px;
+			color: white;
+			width: 50px;
+			height: 50px;
+			background-color: #777;
+			text-align: center;
+			cursor: default;
+			border: 1px solid #888;
+		}
+		td:hover {
+			background-color: #888;
+			cursor: pointer;
+		}
+		td:active {
+			background-color: #666;
+		}
+		#ok {
+			background-color: #555;
+			text-align: right;
+			padding: 0 10px;
+			border-top: 3px solid #FF5F29;
+			overflow: hidden;
+			font: 14px "微软雅黑";
+		}
+		.body {
+			width: 510px;
+			height: 320px;
+			margin: 0 auto;
+			border: 1px dashed #555;
+			padding: 10px;
+			background-color: #FAFFFF;
+		}
+		.explain {
+			float: left;
+			width: 300px;
+			font: 14px "微软雅黑";
+			color: #888;
+		}
+		.color {
+			color: #555;
+		}
+		dl {
+			margin-left: 10px;
+			font-size: 12px;
+			line-height: 13px;
+			margin-top: 0px;
+		}
+		.dt-1 {
+			margin-bottom: 5px;
+			line-height: 15px;
+		}
+		dt {
+			color: #000;
+			font-weight: 700px;
+		}
+		dd {
+			margin-left: 10px;
+			padding-left: 15px;
+		}
+		ol {
+			margin: 0px;
+			padding-left: 0;
+		}
+	</style>
+</head>
+<body>
+	<br />
+	<br />
+	<br />
+	<div class="body">
+		<table>
+			<tr><td colspan="4" id="ok">0</td></tr>
+			<tr>
+				<td onclick="num(1)">1</td>
+				<td onclick="num(2)">2</td>
+				<td onclick="num(3)">3</td>
+				<td onclick="aa('+')">+</td>
+			</tr>
+			<tr>
+				<td onclick="num(4)">4</td>
+				<td onclick="num(5)">5</td>
+				<td onclick="num(6)">6</td>
+				<td onclick="aa('-')">-</td>
+			</tr>
+			<tr>
+				<td onclick="num(7)">7</td>
+				<td onclick="num(8)">8</td>
+				<td onclick="num(9)">9</td>
+				<td onclick="aa('*')">*</td>
+			</tr>
+			<tr>
+				<td onclick="num(0)">0</td>
+				<td onclick="aa('/')">/</td>
+				<td onclick="cc('C')">C</td>
+				<td onclick="bb('=')">=</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
+		<div class="explain">
+			<dl>
+				<dt class="dt-1">【说明】：偶尔出现及细微但很明显的误差，这是二进制算法的误差，非计算器的锅。</dt>
+				<dt>1.0 <span class="color">(2017.2.22)</span></dt>
+				<dd>
+					<ol>
+						出现想法，最基本的计算器，功能非常不完善。
+					</ol>
+				</dd>
+				<dt>2.0 <span class="color">(2017.2.23)</span></dt>
+				<dd>
+					<ol>
+						<li>可以输入到十位、百位、千位、无数位，不再是只能个位数字计算。</li>
+						<li>可以一次输入多项数字计算，不再是只能计算两个数的加减乘除。</li>
+					</ol>
+				</dd>
+				<dt>3.0 <span class="color">(2017.2.27)</span></dt>
+				<dd>
+					<ol>
+						<li>输出结果后，连续按"="，可以在已得出的结果上，继续进行刚刚输入算式的最后一项算法。</li>
+						<li>输出结果后，直接按算法符号，可使已得出的结果直接参与到新的算式中。</li>
+					</ol>
+				</dd>
+				<dt>4.0 <span class="color">(2017.2.28)</span></dt>
+				<dd>
+					
+						【更新】：框内可显示输入记录。
+						
+				</dd>
+				<dt>5.0 <span class="color">(2017.3.1)</span></dt>
+				<dd>
+					<ol>
+						<li>发现bug，“0”按键失效，已解决。</li>
+						<li>【更新】：可以输入小数点。</li>
+					</ol>
+				</dd>
+				<dt>6.0 <span class="color"></span></dt>
+				<dd>
+					<ol>
+						<li>【更新】：没有解决小数计算的误差问题，暂时去掉小数点功能，如果想要去掉，可以先乘以10的十倍数，化为整数，计算完成后，再除以10的十倍数，转换回小数。</li>
+					</ol>
+				</dd>
+			</dl>
+		</div>
+	</div>
+
+	<script>
+		var number = [];  //存放输入的数字
+		var sign = [];   //存放输入的算法符号
+		var time = 0;   //存放输入的算法符号的次数
+		var b=null;   //存放计算结果
+		var c=null;   //转存计算结果
+		var m=null;   //存放计算的最后一项算法和最后一项数字，用于连续按等于号的累计计算
+		var s=null;   //存放按过的键的记录，并实时显示。
+		function num(l) {  //此函数用number[]数组，保存输入的数字。 
+			if (time==0&&typeof(s)!="number"&&b!=null) {
+				s=null;  // s是输出按键记录的变量，判断此时是不是一次计算后，新的输入数值计算的开始，是的话，把旧按键记录清零。
+				b=null;  //  b是上次计算的结果，此时给他清零。
+			}
+			if (number[time]==null) {  //  判断number[time]是否为空，如果是，说明输入的是各位，则直接number[time]=l，如果不是，则让原有的数乘以10。加上新的数，变成多位。time为输入算法符号的次数，初始为0。
+				number[time]=l;
+			}
+			else {
+				number[time]=number[time]*10+l;
+			}
+			logs(l);  // logs（）用来记录按键并显示。
+		}
+		function aa(q) {  //此函数用sign[]数组，保存输入的标点符号，且每输入一次算法符号，time加1.
+			if (b!=null&&time==0) {  //  b是用来存放计算结果的，如果b中有数，说明刚刚计算完后，没有按数值计算新的算式，而是直接按的算法符号，说明用户想在这个计算结果的基础上继续计算，则把值给c，一会儿用c计算。
+				c=b;
+				s=b;
+			}
+			sign[time]=q;
+			time++;
+			logs(q);  // logs()中的s，用来记录按键并显示。
+		}
+		function bb() {
+			if (time==0) {  //判断按键次数time是否为0，如果为0，说明此事是刚刚按了等于号，刚刚被清零，则此时需要在已得出的结果上，继续进行刚刚输入算式的最后一项算法。
+				document.getElementById("ok").innerHTML=(b+m+"="+eval(b+m));
+				s=b+m+"="+eval(b+m);  // s为用来记录按键并显示的变量，算出的结果不是按键，所以需要在这儿专门调用s，把值赋给它，让它记录。
+				b=eval(b+m);  // b是按下等于号，用来放计算结果的变量，此时连续按等于号，需要b累加来存放。
+			}
+			else {  //如果按键次数不为0，则此时是新的计算过程。
+				document.getElementById("ok").innerHTML=(s+"="+equation());
+				s=s+"="+b;
+				m = sign.pop()+number.pop();  //m用来存放算式的最后一个算法符号和最后一个算数，如果稍后继续安等于号，用来累加。
+			}
+			number = [];   //清零。
+			sign = [];
+			time = 0;
+		}
+		function cc() {  //清零。
+			number = [];
+			sign = [];
+			time = 0;
+			b=null;
+			c=null;
+			s=null;
+			document.getElementById("ok").innerHTML=(0);
+		}
+		function equation() {  //计算用的函数。
+			var a = 0;
+			if (c==null) {  // c为空，说明此次运算是新的运算，没有上一次运算结果的参与。
+				for (var i = 0; i < time; i++) {
+					a=a+number[i]+sign[i];
+				}
+				b = eval (a+number[time]); 
+			}
+			else {  // c不为空，说明此次运算是在上一次运算结果的基础上，继续运算。
+				for (var i = 0; i < time; i++) {
+					c=c+sign[i]+number[i+1];
+				}
+				b = eval (c);
+				c=null;
+			}
+			return b;  //返回计算结果。
+		}
+		function logs(g) {  // 用来记录所按的键并显示的函数。
+			if (s!=null) {
+				// s不是空的，就把g转换为字符串，否则，如果用户第一次输入的为两个数。比如11，那么s=s+g，s就变成了2，而不是11.
+				g=g.toString();
+			}
+			// s是空的，则直接s+g，也就是"空+g",而此时g必然是数字，也就是让s等于这个数字。
+			s=s+g;
+			document.getElementById("ok").innerHTML=(s);
+		}
+	</script>
+</body>
+</html>

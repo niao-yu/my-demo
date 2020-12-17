@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>魔毯(超级消耗性能)</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        .prompt {
+            position: absolute;
+            width: 0;
+            height: 50px;
+            left: 50px;
+            background-color: #444444;
+            color: #fff;
+            font-size: 30px;
+            line-height: 50px;
+            user-select: none;
+            text-indent: 10px;
+            animation: aa 4s linear;
+            overflow: hidden;
+        }
+        @keyframes aa {
+            0% {
+                width: 0;
+            }
+            10% {
+                width: 0;
+            }
+            20% {
+                width: 300px;
+            }
+            60% {
+                width: 300px;
+            }
+            100% {
+                width: 0;
+            }
+        }
+        li {
+            list-style: none;
+        }
+        html {
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #00051d;
+            overflow: hidden;
+            cursor: move;
+        }
+        #big {
+            width: 1000px;
+            height: 500px;
+            position: absolute;
+            transform-style: preserve-3D;
+            perspective: 800px;
+            left: 50%;
+            margin-left: -500px;
+            bottom: 0px;
+            user-select: none;
+        }
+        #boxone {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3D;
+            background-color: #aaa;
+            /*transform-origin: ;*/
+            transform: rotateX(60deg);
+        }
+        .box1 {
+            width: 100%;
+            height: 100%;
+            background-color: #56a1ba;
+        }
+        ul {
+            float: left;
+            position: relative;
+            width: 5%;
+            height: 10%;
+            /*transform: translateY(50px);*/
+            transform-style: preserve-3D;
+        }
+        ul li {
+            width: 100%;
+            height: 10%;
+            position: absolute;
+            bottom: 0;
+            border: 1px solid #000000;
+            box-shadow: 2px 2px 2px #000;
+            /*animation: a 1s ease-in infinite;*/
+        }
+        ul li:nth-child(1) {
+            transform-origin: bottom;
+            transform: rotateX(-90deg);
+            background-color: #98ffd0;
+            transform-style: preserve-3D;
+        }
+        ul li:nth-child(1) span{
+            transform-origin: top;
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            transform: rotateX(90deg) translateY(-50px);
+            background-color: #7880ff;
+        }
+        ul li:nth-child(2) {
+            transform-origin: bottom;
+            transform: rotateX(-90deg) rotateY(90deg) translateZ(25px) translateX(25px);
+            background-color: #8ab7ff;
+        }
+        ul li:nth-child(3) {
+            transform-origin: bottom;
+            transform: rotateX(-90deg) rotateY(180deg) translateZ(50px);
+            background-color: #6e6e6e;
+        }
+        ul li:nth-child(4) {
+            transform-origin: bottom;
+            transform: rotateX(-90deg) rotateY(270deg) translateZ(25px) translateX(-25px);
+            background-color: #848484;
+        }
+        @keyframes a {
+            0% {
+                height: 5px;
+            }
+            30% {
+                height: 20px;
+            }
+            40% {
+                height: 20px;
+            }
+            70% {
+                height: 5px;
+            }
+        }
+        /*@keyframes a {*/
+            /*0% {*/
+                /*height: 5px;*/
+            /*}*/
+            /*30% {*/
+                /*height: 20px;*/
+            /*}*/
+            /*40% {*/
+                /*height: 20px;*/
+            /*}*/
+            /*70% {*/
+                /*height: 5px;*/
+            /*}*/
+        /*}*/
+    </style>
+</head>
+<body>
+<div class="prompt">可使用鼠标拖拽旋转</div>
+<div id="big">
+    <div id="boxone">
+        <div class="box1">
+            <ul>
+                <li><span></span></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    window.onload = function(){
+
+        var big = document.querySelector("#big");
+        var box1 = big.querySelector(".box1");
+        var ul = box1.querySelector("ul");
+        //复制ul
+        for (var i = 0; i < 199; i++) {
+            box1.appendChild(ul.cloneNode(true));
+        }
+        // 绑定CSS动画
+        var uls = box1.querySelectorAll("ul");
+        for (var i = 0; i < 10; i++) {
+            for (var j = 0; j < 20; j++) {
+                var temp = i*20 + j;
+                var lis = uls[temp].children;
+                for (var k = 0; k < lis.length; k++) {
+                    lis[k].style.animation = "";
+                    lis[k].style.animation = "a 1s " + (i+j)*100 +"ms ease-in infinite";
+                }
+            }
+        }
+        document.body.ondblclick = function() {
+            big.style.transition = "all 500ms ease-out";
+            big.style.transform = "rotateX(0deg) rotateY(0deg )";
+        }
+
+
+
+
+
+        //鼠标拖动旋转效果
+        var theX = 0;  //用来记录x和y轴的角度，每次拖动完毕后更新
+        var theY = 0;  // （接上一行）这样就不用了每次想办法获取角度了
+        var xx;  //下面用来保存鼠标拖动时的x轴向位置
+        var yy;  //下面用来保存鼠标拖动时的y轴向位置
+        // 鼠标按下
+        document.onmousedown = function(event){
+            // 获取点击时，鼠标的x和y轴坐标
+            var x = event.pageX;
+            var y = event.pageY;
+            //获取拖动前，盒子的x和y轴角度，用来累加角度
+            var xxx = theX;
+            var yyy = theY;
+            // 鼠标按下时移动，就是拖动
+            document.onmousemove = function(e){
+                //实时获取鼠标x和y轴的位置
+                xx = e.pageX;
+                yy = e.pageY;
+                //   一个判断，比如盒子转了180度，此时旋转的角度需要相反一下，看着才是正常的。。。可以去掉语句，改成和下面一条的一样的样子试试
+                //而且X轴不知道为什么是固定的，所以X轴的不用管
+                var tempY = Math.abs(yyy)%360;
+                if ( 0 <= tempY && tempY < 90 || 270 < tempY && tempY < 360) {
+                    xx = xxx + (xx - x)/5;
+                }
+                else {
+                    // 计算实时的角度
+                    xx = xxx - (xx - x)/5;
+                }
+                // 计算实时的角度
+                yy = yyy - (yy - y)/5;
+                //给CSS赋值角度
+//                big.style.transition = "all 500ms ease-out";
+                big.style.transform = "rotateX(" + yy + "deg) rotateY(" + xx + "deg )";
+            }
+        }
+        //鼠标弹起事件
+        document.onmouseup = function(){
+            document.onmousemove = null;
+            // 更新盒子此时的角度，用于下一次拖动累加
+            theX = xx;
+            theY = yy;
+        }
+    }
+</script>
+</html>

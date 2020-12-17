@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=800px, initial-scale=1">
+  <title>生命游戏</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    .box {
+      width: 100vw;
+      height: 100vh;
+      /* min-width: ; */
+    }
+    .canvasBox {
+      width: 100vw;
+      position: relative;
+      left: 0;
+      top: 0;
+      background-color: #000;
+      overflow: hidden;
+    }
+    canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: left top;
+    }
+    .text {
+      display: flex;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+    }
+    .text > div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 10px;
+    }
+    .left {
+      flex: none;
+      width: max-content;
+      /* box-shadow: inset -1px 0 0 0 #000; */
+    }
+    .right {
+      flex: 1;
+      box-shadow: -1px -1px 0 0 #000;
+    }
+    .text .left p {
+      font-size: 12px;
+    }
+    .text .right .btns {
+      display: flex;
+      align-items: center;
+    }
+    .text .right .btns + .btns {
+      margin-top: 20px;
+    }
+    input {
+      margin: 0 20px 0 10px;
+      padding-left: 5px;
+      width: 100px;
+      box-sizing: border-box;
+      border: 1px solid #aaa;
+      outline: none;
+      box-shadow: none;
+    }
+    .text .right .btns button {
+      padding: 0 10px;
+      margin-left: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="text">
+      <div class="left">
+          <p>【生命游戏】，亮起为生，熄灭为死。</p>
+          <p>包围一个点的附近的8个点，称为他的附近点，一个点的生死，由他附近点决定。</p>
+          <p>一个任意点，它活着的附近点的个数为3时，这个点活。</p>
+          <p>一个任意点，它活着的附近点的个数为2时，这个点的状态不变。</p>
+          <p>其他情况时，这个点死去。</p>
+          <p>黄色方块，为生命播种系统，为系统播种一次生命 <span class="addLiving" style="color: blue;cursor: pointer;font-weight: bolder;">添加一次</span>。</p>
+      </div>
+      <div class="right">
+        <div class="btns">
+          <span>动画时间间隔(秒)</span>
+          <input class="timeInput" type="text">
+          <button class="changeTime">提交</button>
+          <button class="startStopBtn">点击暂停</button>
+        </div>
+        <div class="btns">
+          <span>方格线粗</span>
+          <input class="lineWidth" type="text">
+          <span>方格宽高</span>
+          <input class="gridWidth" type="text">
+          <button class="upload">提交并刷新</button>
+          <button class="reset">重置并刷新</button>
+        </div>
+      </div>
+    </div>
+    <div class="canvasBox">
+      <canvas id="bg"></canvas>
+      <canvas id="grid"></canvas>
+    </div>
+  </div>
+</body>
+<script>
+  var query = getQuery()
+  var lineWidth_default = 1 // 线的宽度 - 默认的值
+  var gridWidth_default = 6 // 方格的宽高 - 默认的值
+
+  var lineWidth_temp = query.lineWidth ? query.lineWidth - 0 : lineWidth_default // 线的宽度 - 临时
+  var gridWidth_temp = query.gridWidth ? query.gridWidth - 0 : gridWidth_default // 线的宽度 - 临时
+  if (lineWidth_temp > gridWidth_temp) lineWidth_temp = gridWidth_temp
+  var config = {
+    lineWidth: lineWidth_temp, // 线的宽度
+    lineColor: '#111', // 线的颜色
+    gridWidth: gridWidth_temp, // 方格的宽高
+    gridColor: "#7bf94c", // 活着的方格的颜色
+    gridColorSetLife: "#f9e64c", // 生命播种的方格颜色
+    width: 0, // canvas的宽高
+    height: 0, // canvas的宽高
+    numColumn: 0, // 列数 不要写 计算生成
+    numRow: 0, // 行数 不要写 计算生成
+    timer: null,
+    time: 1000 * 0.1, // 刷新一次方格的时间
+  }
+
+  var multiple = 2; // 放大的倍数(因为不放大的话,canvas会模糊)
+  var canvasBox; // canvas大盒子dom
+  var dom_bg; // 背景线的dom
+  var ctx_bg; // 背景线的canvas对象
+  var dom_grid; // 方块的的dom
+  var ctx_grid; // 方块的的canvas对象
+
+  initSet() // 初始化所有配置
+
+  // 初始化生命播种程序
+  var getArrList = [getRandomArr(0, 50).get]
+
+  drawLine() // 绘制背景
+  drawGrid() // 先绘制第一批方格
+  bindEvent() // 初始化页面数据 + 绑定事件
+
+  startGrid() // 开始计算并更新方格
+
+  // 活着的方格坐标数组
+  var livingArr = []
+
+  // 初始化所有配置 比如 config 对象\全局变量等等
+  function initSet() {
+    // 调整一下,因为是multiple倍关系,这里乘以multiple
+    config.lineWidth = config.lineWidth * multiple
+    config.gridWidth = config.gridWidth * multiple
+
+    // 获取dom
+    text = document.querySelector('.text')
+    canvasBox = document.querySelector('.canvasBox')
+    dom_bg = document.querySelector('#bg')
+    dom_grid = document.querySelector('#grid')
+
+    var boxHeight = document.documentElement.clientHeight - text.offsetHeight
+    canvasBox.setAttribute('style', 'height: ' + boxHeight + 'px;')
+
+    // 盒子的宽高
+    var width_box = canvasBox.offsetWidth, height_box = canvasBox.offsetHeight;
+    // canvas的宽高
+    var width = width_box * multiple, height = height_box * multiple;
+    var oneSpace = config.gridWidth + config.lineWidth
+    var width_temp = width - config.lineWidth, height_temp = height - config.lineWidth
+    config.numColumn = Math.floor(width_temp / oneSpace) // 列数
+    config.numRow = Math.floor(height_temp / oneSpace) // 行数
+    config.width = config.lineWidth + oneSpace * config.numColumn
+    config.height = config.lineWidth + oneSpace * config.numRow
+
+    // 给canvas的dom设置宽高
+    dom_bg.setAttribute('width', config.width)
+    dom_bg.setAttribute('height', config.height)
+    dom_bg.setAttribute('style', 'transform: scale(' + (1 / multiple) + ');')
+    dom_grid.setAttribute('width', config.width)
+    dom_grid.setAttribute('height', config.height)
+    dom_grid.setAttribute('style', 'transform: scale(' + (1 / multiple) + ');')
+
+    // 获取canvas对象
+    ctx_bg = dom_bg.getContext('2d')
+    ctx_grid = dom_grid.getContext('2d')
+    
+  }
+
+  function startGrid(time) {
+    if (time) config.time = time
+    clearInterval(config.timer)
+    config.timer = setInterval(function() {
+      livingArr = computedGrid() // 计算获取新的活着的方格
+      for (var i = 0; i < getArrList.length; i++) {
+        livingArr = livingArr.concat(getArrList[i](i))
+      }
+      drawGrid()
+    }, config.time);
+  }
+
+  /*
+  * 获取生命播种程序的构造器
+  * default_x_bili: 生命播种程序的起始x位置 - 百分比例
+  * default_y_bili: 生命播种程序的起始y位置 - 百分比例
+  * forever: 是否永远一遍遍的播撒生命
+  */
+  function getRandomArr(default_x_bili, default_y_bili, forever) {
+    var temp_x = Math.ceil(default_x_bili / 100 * config.numColumn) || 0
+    var temp_y = Math.ceil(default_y_bili / 100 * config.numRow) || 0
+    function getRandom(from, to) {
+      var num = Math.ceil(Math.random() * (to - from) + from)
+      return num
+    }
+    var stop = false
+    // 返回闭包
+    return {
+      get: function(index) {
+        var tempArr = []
+        if (stop) return tempArr
+        var length = getRandom(5, 10)
+        for (var i =0; i < length; i++) {
+          tempArr.push([temp_x + getRandom(-2, 2), temp_y + getRandom(-2, 2), true])
+        }
+        for (var i = 0; i < tempArr.length; i++) {
+          tempArr[i][0] = getRationalArr(tempArr[i][0], 0, config.numColumn)
+          tempArr[i][1] = getRationalArr(tempArr[i][1], 0, config.numRow)
+        }
+        temp_x += 1
+        if (temp_x > config.numColumn) {
+          temp_x = 0
+          // temp_y += 50
+          if (!forever) {
+            stop = true
+            getArrList.splice(index, 1) // 删除这个方法
+          }
+        }
+        // if (temp_y > config.numRow) {
+        //   temp_y = 0
+        // }
+        return tempArr;
+      }
+    }
+  }
+
+  // 计算新的一批方格方格
+  function computedGrid() {
+    var newArr = [] // 新的活着的点
+    var obj = {} // 缓存活着的点
+    var numRow = config.numRow // 行数
+    var numColumn = config.numColumn // 列数
+
+    // 缓存对象添加值
+    for (var i = 0; i < livingArr.length; i++) {
+      var nowPoint = livingArr[i], x = nowPoint[0], y = nowPoint[1]
+      obj[x + '_' + y] = true // 计入缓存
+    }
+
+    for (var x = 0; x < numColumn; x++) {
+      for (var y = 0; y < numRow; y++) {
+        // x 为横坐标, y 为纵坐标
+        var thisKey = x + '_' + y
+        var thisIsLiving = !!obj[thisKey] // 当前的这个是否是活着的
+        var nearbyLivingNum = 0 // 附近活着的点的数量
+        // 获取周围方格数组
+        var otherArr = [
+          [x - 1, y - 1],
+          [x - 1, y],
+          [x - 1, y + 1],
+          [x, y - 1],
+          [x, y + 1],
+          [x + 1, y - 1],
+          [x + 1, y],
+          [x + 1, y + 1],
+        ]
+        for (var i = 0; i < otherArr.length; i++) {
+          otherArr[i][0] = getRationalArr(otherArr[i][0], 0, config.numColumn)
+          otherArr[i][1] = getRationalArr(otherArr[i][1], 0, config.numRow)
+        }
+        // 获取周围方格的生存数量
+        for (var j = 0; j < otherArr.length; j++) {
+          var nearbyPoint = otherArr[j]
+          var key = nearbyPoint[0] + '_' + nearbyPoint[1]
+          if (obj[key]) nearbyLivingNum++
+        }
+        if (nearbyLivingNum === 3) {
+          newArr.push([x, y])
+        } else if (nearbyLivingNum === 2) {
+          if (thisIsLiving) newArr.push([x, y])
+        }
+      }
+    }
+    return newArr;
+  }
+
+  // 绘制背景线
+  function drawLine() {
+    var width = config.width, height = config.height, numColumn = config.numColumn, numRow = config.numRow
+    ctx_bg.beginPath()
+    ctx_bg.strokeStyle = config.lineColor
+    ctx_bg.lineWidth = config.lineWidth + ''
+    var oneSpace = config.lineWidth + config.gridWidth
+
+    // 画横线,n行
+    var nowNum = 0, condition = true
+    do {
+      var nowTop = oneSpace * nowNum
+      if (nowNum > numRow) {
+        condition = false
+        break;
+      } else {
+        ctx_bg.moveTo(0, nowTop)
+        ctx_bg.lineTo(width, nowTop)
+        nowNum++
+      }
+    } while (condition)
+
+    // 画竖线,n列
+    var nowNum = 0, condition = true
+    do {
+      var nowLeft = oneSpace * nowNum
+      if (nowNum > numColumn) {
+        condition = false
+        break;
+      } else {
+        ctx_bg.moveTo(nowLeft, 0)
+        ctx_bg.lineTo(nowLeft, height)
+        nowNum++
+      }
+    } while (condition)
+    ctx_bg.stroke()
+  }
+
+  // 绘制一次方格们
+  function drawGrid() {
+    ctx_grid.clearRect(0, 0, config.width, config.height)
+    var lineWidth = config.lineWidth
+    var lineColor = config.lineColor, gridWidth = config.gridWidth
+    if (!livingArr || !livingArr.length) return
+    var oneSpace = lineWidth + config.gridWidth
+    ctx_grid.beginPath()
+    ctx_grid.fillStyle = config.gridColor;
+    for (var i = 0; i < livingArr.length; i++) {
+      var nowPoint = livingArr[i]
+      if (nowPoint[2]) ctx_grid.fillStyle = config.gridColorSetLife;
+      var left = nowPoint[0] * oneSpace + lineWidth / 2, top = nowPoint[1] * oneSpace + lineWidth / 2
+      ctx_grid.fillRect(left, top, gridWidth, gridWidth);
+    }
+  }
+
+  // 把一个值控制在两个值之间(当from = 0, to = 100时,result的值保持 result >=0, result <= 99)
+  function getRationalArr(num, from, to) {
+    var result = num
+    while (result < from) {
+      var temp = from - num
+      result = to - temp
+    }
+    while (result > to - 1) {
+      var temp = num - to
+      result = from + temp
+    }
+    return result
+  }
+
+  // 绑定事件
+  function bindEvent() {
+    // 给input框设置初始时间间隔值
+    document.querySelector('.timeInput').value = config.time / 1000
+    document.querySelector('.lineWidth').value = config.lineWidth / 2
+    document.querySelector('.gridWidth').value = config.gridWidth / 2
+
+    // 输入新时间间隔后提交 - 点击按钮
+    document.querySelector('.changeTime').onclick = function() {
+      changeTime()
+    }
+    // 输入新时间间隔后提交 - 输入框内回车
+    document.querySelector('.timeInput').onkeydown = function(e) {
+      if (e.keyCode === 13) changeTime()
+    }
+
+    // 启动和暂停按钮
+    document.querySelector('.startStopBtn').onclick = function() {
+      if (config.timer) {
+        clearInterval(config.timer)
+        config.timer = null
+        this.innerHTML = '点击启动'
+      } else {
+        startGrid()
+        this.innerHTML = '点击暂停'
+      }
+    }
+
+    // 提交并刷新 - 按钮
+    document.querySelector('.upload').onclick = changeAndReload
+    // 提交并刷新 - 输入框内回车
+    document.querySelector('.lineWidth').onkeydown = function(e) {
+      if (e.keyCode === 13) changeAndReload()
+    }
+    document.querySelector('.gridWidth').onkeydown = function(e) {
+      if (e.keyCode === 13) changeAndReload()
+    }
+
+    // 重置并刷新 - 按钮
+    document.querySelector('.reset').onclick = function() {
+      window.location.href = window.location.pathname
+    }
+
+    // 添加一次生命播种
+    document.querySelector('.addLiving').onclick = function() {
+      getArrList.push(getRandomArr(0, 50).get)
+    }
+
+    // 真实改变时间间隔
+    function changeTime() {
+      var time = document.querySelector('.timeInput').value
+      if (!/^\d+(\.\d+)?$/.test(time) || !(time - 0)) {
+        alert('动画时间间隔(秒) - 请输入正确格式的正数')
+        return
+      }
+      time = time * 1000
+      startGrid(time)
+    }
+
+    // 真实改变方格线粗细和方格宽高并刷新
+    function changeAndReload() {
+      var lineWidth = document.querySelector('.lineWidth').value
+      if (!/^\d+(\.\d+)?$/.test(lineWidth) || !(lineWidth - 0)) {
+        alert('方格线粗 - 请输入正确格式的正数')
+        return
+      }
+      var gridWidth = document.querySelector('.gridWidth').value
+      if (!/^\d+(\.\d+)?$/.test(gridWidth) || !(gridWidth - 0)) {
+        alert('方格宽高 - 请输入正确格式的正数')
+        return
+      }
+      if (lineWidth - 0 > gridWidth - 0) {
+        alert('方格线粗 不能大于 方格宽高')
+        return
+      }
+      window.location.href = window.location.pathname + '?lineWidth=' + (lineWidth - 0) + '&gridWidth=' + (gridWidth - 0)
+    }
+  }
+
+  // 获取url参数对象
+  function getQuery() {
+    var query = window.location.search.substring(1) || "", obj = {}
+    if (query) {
+      var vars = query.split('&')
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=')
+        obj[pair[0]] = pair[1]
+      }
+    }
+    return obj
+  }
+
+</script>
+</html>

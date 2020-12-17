@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>拖拽DNA链</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            background-color: #000820;
+            overflow: hidden;
+            cursor: move;
+        }
+        .big {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            margin-left: -100px;
+            perspective: 800px;
+            transform-style: preserve-3D;
+            transform-origin: 100px 200px;
+        }
+        .big ul {
+            transform-style: preserve-3D;
+            transform-origin: 100px 259.8px ;
+            background-color: #fff;
+            user-select: none;
+            /*transform: rotateX(37deg)!* rotateY(10deg) rotateZ(10deg)*!;*/
+        }
+        .big ul li {
+            list-style: none;
+            position: relative;
+            transform-style: preserve-3D;
+            transform-origin: 100px 10px;
+            height: 20px;
+            margin-bottom: 20px;
+        }
+        .big ul li span {
+            position: absolute;
+            width: 200px;
+            height: 20px;
+            /*background-color: #fff;*/
+        }
+        .big ul li span:nth-child(1) {
+            transform: translateZ(10px);
+            background-color: #cbcbcb;
+        }
+        .big ul li span:nth-child(2) {
+            transform: rotateX(90deg) translateZ(10px);
+            background-color: #989898;
+        }
+        .big ul li span:nth-child(3) {
+            transform: rotateY(180deg) translateZ(10px);
+            background-color: #a9cacb;
+        }
+        .big ul li span:nth-child(4) {
+            transform: rotateX(270deg) translateZ(10px);
+            background-color: #c4cba4;
+        }
+        .big ul li span:nth-child(5) {
+            width: 20px;
+            transform: rotateY(90deg) translateZ(190px);
+            background-color: #cbb7b4;
+        }
+        .big ul li span:nth-child(6) {
+            width: 20px;
+            transform: rotateY(-90deg) translateZ(10px);
+            background-color: #a8accb;
+        }
+    </style>
+    <script>
+        window.onload = function(){
+
+            var lis = document.querySelectorAll("li");
+            for (var i = 0; i < lis.length; i++) {
+                lis[i].style.transform = "rotateY(" + i*15 + "deg)";
+            }
+
+
+
+
+
+
+
+
+            move(); //  实现拖动
+            function move() {
+                var big = document.querySelector(".big");
+                var theX = 0;  //用来记录x和y轴的角度，每次拖动完毕后更新
+                var theY = 0;  // （接上一行）这样就不用了每次想办法获取角度了
+                var xx;  //下面用来保存鼠标拖动时的x轴向位置
+                var yy;  //下面用来保存鼠标拖动时的y轴向位置
+                // 鼠标按下
+                document.onmousedown = function(event){
+                    // 获取点击时，鼠标的x和y轴坐标
+                    var x = event.pageX;
+                    var y = event.pageY;
+                    //获取拖动前，盒子的x和y轴角度，用来累加角度
+                    var xxx = theX;
+                    var yyy = theY;
+                    // 鼠标按下时移动，就是拖动
+                    document.onmousemove = function(e){
+                        //实时获取鼠标x和y轴的位置
+                        xx = e.pageX;
+                        yy = e.pageY;
+                        //   一个判断，比如盒子转了180度，此时旋转的角度需要相反一下，看着才是正常的。。。可以去掉语句，改成和下面一条的一样的样子试试
+                        //而且X轴不知道为什么是固定的，所以X轴的不用管
+                        var tempY = Math.abs(yyy)%360;
+                        if ( 0 <= tempY && tempY < 90 || 270 < tempY && tempY < 360) {
+                            xx = xxx + (xx - x)/2;
+                        }
+                        else {
+                            // 计算实时的角度
+                            xx = xxx - (xx - x)/2;
+                        }
+//                    var tempX = Math.abs(xxx)%360;
+//                    if ( 0 <= tempX && tempX < 90 || 270 < tempX && tempX < 360) {
+//                        yy = yyy - (yy - y)/2;
+//                    }
+//                    else {
+                        // 计算实时的角度
+                        yy = yyy - (yy - y)/2;
+//                    }
+                        //给CSS赋值角度
+                        big.style.transition = "all 500ms ease-out";
+                        big.style.transform = "rotateX(" + yy + "deg) rotateY(" + xx + "deg )";
+                    }
+                }
+                //鼠标弹起事件
+                document.onmouseup = function(){
+                    document.onmousemove = null;
+                    // 更新盒子此时的角度，用于下一次拖动累加
+                    theX = xx;
+                    theY = yy;
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="big">
+<ul>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+    <li>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </li>
+</ul>
+</div>
+</body>
+</html>

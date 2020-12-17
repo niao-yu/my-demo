@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>滑动发送礼物(移动端)</title>
+  <script>
+    (function (doc, win) {
+      var width = 750;
+      var docEl = doc.documentElement;
+      var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+      var recalc = function () {
+        var clientWidth = docEl.clientWidth;
+        if (!clientWidth) return;
+        docEl.style.fontSize = 100 * (clientWidth / width) + 'px';
+      };
+      if (!doc.addEventListener) return;
+      win.addEventListener(resizeEvt, recalc, false);
+      doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+  </script>
+  <link rel="stylesheet" type="text/css" href="./css/base.css">
+  <link rel="stylesheet" type="text/css" href="./css/iconfont.css">
+  <link rel="stylesheet" type="text/css" href="./css/index.min.css">
+</head>
+
+<body>
+  <div class="index">
+    <div>
+      <div class="qr-code">
+        <i class="iconfont icon-tupian"></i>
+        <p>二维码</p>
+      </div>
+    </div>
+    <div class="line"></div>
+    <div>
+      <div class="scan">
+        <i class="iconfont icon-serch"></i>
+        <p>扫一扫</p>
+      </div>
+    </div>
+    <!-- <span>直接进入</span> -->
+  </div>
+  <div class="room hide">
+    <div class="other">
+      <div class="wait-join">
+        <p class="code">请对方扫描下方二维码</p>
+        <div class="qr-code"></div>
+        <p class="tip">若对方扫描功能不可用，请输入房间号：
+          <span class="roomId">123</span>
+        </p>
+      </div>
+      <span class="slide-close">
+        <i class="iconfont icon-close48 close-room"></i>
+      </span>
+      <div class="other-user">
+        <div class="other-msg clearfix">
+          <div class="user-img left"></div>
+          <div class="user-msg left">
+            <table>
+              <tr class="name">
+                <td>姓名:</td>
+                <td>李小红</td>
+              </tr>
+              <tr class="fans">
+                <td>粉丝数量:</td>
+                <td>324</td>
+              </tr>
+              <tr class="time">
+                <td>性别</td>
+                <td class="tims-s">女</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="user">
+      <div class="my-gift">
+        <div class="item">
+          <span class="gift-img index-1"></span>
+          <p>鲜花(<span class="gift-num" index="giftNum1"></span>)</p>
+        </div>
+        <div class="item">
+          <span class="gift-img index-2"></span>
+          <p>牛粪(<span class="gift-num" index="giftNum2"></span>)</p>
+        </div>
+        <div class="item">
+          <span class="gift-img index-3"></span>
+          <p>蟋蟀(<span class="gift-num" index="giftNum3"></span>)</p>
+        </div>
+      </div>
+      <div class="inputs">
+        <input type="text" name="" id="" class="left">
+        <span class="send left">发送</span>
+      </div>
+      <div class="my-msg clearfix">
+        <div class="user-img left"></div>
+        <div class="user-msg left">
+          <table>
+            <tr class="name">
+              <td>姓名:</td>
+              <td>张晓明</td>
+            </tr>
+            <tr class="fans">
+              <td>粉丝数量:</td>
+              <td>154</td>
+            </tr>
+            <tr class="time">
+              <td>性别</td>
+              <td class="tims-s">男</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scan-tip hide">
+    <p>H5使用扫一扫功能 </p>
+    <p>需要在平台App端打开</p>
+    <span>请输入房间号</span>
+    <div>
+      <input class="fl" type="text" name="" value="" placeholder="请输入房间号">
+      <span class="fl">返回</span>
+    </div>
+  </div>
+</body>
+<script src="./js/zepto.min.js"></script>
+<script src="./js/index.js"></script>
+
+</html>

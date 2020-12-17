@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>打蟋蟀游戏(移动端)</title>
+  <script>
+    (function (doc, win) {
+      var width = 750;
+      var docEl = doc.documentElement;
+      var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+      var recalc = function () {
+        var clientWidth = docEl.clientWidth;
+        if (!clientWidth) return;
+        docEl.style.fontSize = 100 * (clientWidth / width) + 'px';
+      };
+      if (!doc.addEventListener) return;
+      win.addEventListener(resizeEvt, recalc, false);
+      doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+  </script>
+  <link rel="stylesheet" type="text/css" href="./css/base.css">
+  <link rel="stylesheet" type="text/css" href="./css/iconfont.css">
+  <link rel="stylesheet" type="text/css" href="./css/index.css">
+</head>
+
+<body>
+  <!-- <div class="head-top"></div> -->
+  <div class="head">
+    <div class="left">
+      <i class="iconfont icon-back"></i>
+    </div>
+    <div class="userMsg right">
+      <span class="search">
+        <i class="iconfont icon-serch"></i>
+      </span>
+      <span class="peoples">
+        <i class="iconfont icon-peoples"></i>
+      </span>
+    </div>
+  </div>
+  <div class="container"></div>
+  <div class="footer">
+    <div class="input-msg">
+      <span class="left">
+        <i class="iconfont icon-yuyin"></i>
+      </span>
+      <span class="left">
+        <i class="iconfont icon-youxi"></i>
+      </span>
+      <input type="text" name="" id="" class="left">
+      <span class="btn left">发送</span>
+    </div>
+    <div class="input-other">
+      <span class="item">
+        <i class="iconfont icon-tupian"></i>
+      </span>
+      <span class="item">
+        <i class="iconfont icon-biaoqing"></i>
+      </span>
+      <span class="item">
+        <i class="iconfont icon-wenjian"></i>
+      </span>
+      <span class="item">
+        <i class="iconfont icon-zhendong"></i>
+      </span>
+      <span class="item">
+        <i class="iconfont icon-hongbao"></i>
+      </span>
+    </div>
+    <div class="other"></div>
+  </div>
+  <div class="shade">
+    <div class="shade-con">
+      <h2>
+        <i class="iconfont icon-back back hide"></i>
+        <div class="game-logo hide"></div>
+        <span>选择游戏</span>
+        <i class="iconfont icon-close48 close"></i>
+      </h2>
+      <div class="game">
+        <div class="game-select" style="opacity: 1">
+          <div class="game-list">
+            <span class="item">
+              <div class="img"></div>
+              <span>1</span>
+              <h3>打地鼠</h3>
+            </span>
+            <span class="item">
+              <div class="img"></div>
+              <span>2</span>
+              <h3>贪吃蛇</h3>
+            </span>
+            <span class="item">
+              <div class="img"></div>
+              <span>3</span>
+              <h3>俄罗斯方块</h3>
+            </span>
+
+          </div>
+        </div>
+        <div class="game-people hide" style="opacity: 1">
+          <ul></ul>
+        </div>
+      </div>
+      <div class="choose hide">
+        <span class="close left">关闭</span>
+        <span class="yes left disabled">确定</span>
+      </div>
+    </div>
+  </div>
+  <!-- 斗蛐蛐游戏页面 -->
+  <div id="game">
+    <!-- 斗蛐蛐游戏盒子 -->
+    <div class="game-box">
+      <!-- 其他蛐蛐 -->
+      <div class="other-box">
+        <div class="other-people" index="a1" name="a1">
+          <div class="grig">
+            <img src="./img/蛐蛐_爬行.gif" alt="">
+          </div>
+        </div>
+        <div class="other-people" index="a2" name="a2">
+          <div class="grig">
+            <img src="./img/蛐蛐_爬行.gif" alt="">
+          </div>
+        </div>
+        <div class="other-people" index="a3" name="a3">
+          <div class="grig">
+            <img src="./img/蛐蛐_爬行.gif" alt="">
+          </div>
+        </div>
+      </div>
+      <!-- 我的发射倒计时 -->
+      <div class="my-box"></div>
+      <!-- 我的蛐蛐 -->
+      <span class="grig">
+        <img src="./img/蛐蛐_爬行.png" alt="">
+      </span>
+      <!-- 进度条 -->
+      <div class="progress-bar">
+        <span>
+          <img src="./img/时间进度.png" alt="">
+        </span>
+        <img src="./img/时间.png" alt="">
+        <div class="time"><span>60</span>秒</div>
+      </div>
+      <!-- 力度条 -->
+      <div class="might">
+        <span>
+          <img src="./img/力量进度.png" alt="">
+        </span>
+        <img src="./img/力量.png" alt="">
+        <div class="mightNum"><span>0</span>%</div>
+      </div>
+    </div>
+    <div class="advise">
+      <div>
+        <span class="fl">别人说的话</span>
+      </div>
+    </div>
+    <!-- 排行榜 -->
+    <div class="game-rank hide">
+      <div class="close">X</div>
+      <div class="table">
+        <table></table>
+      </div>
+    </div>
+    <!-- End 斗蛐蛐游戏盒子 -->
+  </div>
+  <!-- End 斗蛐蛐游戏页面 -->
+</body>
+<script src="./js/zepto.min.js"></script>
+<script src="./js/index.js"></script>
+<script src="./js/radialIndicator.min.js"></script>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>页面隐藏|激活|关闭的监听</title>
+</head>
+<body class="pageWatchBody"></body>
+<script src="./pageWatch.js"></script>
+<script>
+  var dom = document.querySelector('body.pageWatchBody')
+  if (!dom) console.log('没有找到元素 body.pageWatchBody')
+  else {
+    function toConsole(text) {
+      let pDom = document.createElement('p')
+      pDom.innerHTML = text
+      dom.appendChild(pDom)
+    }
+  // 绑定页面切后台和再展示的的事件
+    var prop = new pageWatch({
+      visible: function(main) {
+        toConsole('激活了 ', main.visibleNum, '，现在是 ', main.status)
+        document.title = '激活了'
+        if (main.visibleNum === 5) {
+          main.add({
+            hidden: function(main) {
+              toConsole('复活的：离开了 ', main.hiddenNum, '，现在是 ', main.status)
+              if (main.hiddenNum === 8) {
+                main.removeEvent()
+              }
+            }
+          })
+        }
+      },
+      hidden: function(main) {
+        toConsole('离开了 ', main.hiddenNum, '，现在是 ', main.status)
+        document.title = '离开了'
+        if (main.hiddenNum === 3) {
+          main.remove(['hidden', 'reload'])
+        }
+      },
+      reload: function(main, obj) {
+        // 支持支同步命令，异步的，需要弹出询问是否确认离开的弹出，用户点击取消离开后，才能执行
+        obj.bool = true
+        toConsole('用户要离开了')
+      }
+    }, function(obj) {
+      console.log(obj)
+    })
+  }
+</script>
+</html>

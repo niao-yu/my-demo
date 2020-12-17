@@ -1,0 +1,14 @@
+	/*css样式初始化开始*/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,input,button,textarea,p,tr,th,table,td,img{padding:0; margin:0;font-weight: lighter;}
+table{border-collapse:collapse;border-spacing:0;}
+input,button{border:0;outline:0;}
+body,input,button,li,h1,h2,h3,h4,h5,h6,dt,dd,p,span,a{font-family:"微软雅黑";font-size:0.2rem;color:#000;}
+li{list-style:none;}
+i,em{font-style: normal;}
+b,strong{font-weight:normal;}
+a{text-decoration: none;}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden;}   
+.clearfix{*zoom: 1;}
+.fl{float:left;}
+.fr{float:right}
+/*css样式初始化完毕*/

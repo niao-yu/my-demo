@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>loading加载状态小功能</title>
+  <style>
+    /*定义动画*/
+    @-webkit-keyframes spin { /*兼容性写法。spin是关键帧的动画名称*/
+      from {-webkit-transform: translate(-50%, -50%) rotate(0deg);}
+      to {-webkit-transform: translate(-50%, -50%) rotate(360deg);}
+    }
+    @keyframes spin {
+      from {transform: translate(-50%, -50%) rotate(0deg);}
+      to {transform: translate(-50%, -50%) rotate(360deg);}
+    }
+    /* 改为,relative, 需要先判断是有定位,没有的话,需要这个类名,否则不用加 */
+    .toRelative {
+      position: relative;
+    }
+    /* 遮罩 */
+    .onLoading::before {
+      position: absolute;
+      display: block;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      content: '';
+      background-color: rgba(0,0,0,.4);
+    }
+    /* loading */
+    .onLoading::after {
+      position: absolute;
+      display: block;
+      content: '';
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 20px;
+      height: 20px;
+      border-top: 2px solid #fff;
+      border-right: 2px solid transparent;
+      border-bottom: 2px solid #fff;
+      border-left: 2px solid transparent;
+      border-radius: 50%;
+      -webkit-animation: spin 1.3s linear infinite;/*鼠标hover时，i图标旋转,infinite表示动画无限循环*/
+      animation: spin 1.3s linear infinite; 
+    }
+    div {
+      width: 100px;
+      height: 100px;
+      border: 1px solid #000;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    点我切换loading状态
+  </div>
+</body>
+<script>
+  document.querySelector('div').onclick = function() {
+    let el = this
+    if (el.classList.contains('onLoading')) { // 已经存在类名,已经是loading状态,取消loading
+      el.classList.remove('onLoading', 'toRelative')
+    }
+    else { // 非loading状态,加入loading
+      if (document.defaultView.getComputedStyle(el, null).position === 'static') el.classList.add('toRelative') // 是静态,加入relative定位
+      el.classList.add('onLoading')
+    }
+  }
+</script>
+</html>

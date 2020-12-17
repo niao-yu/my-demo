@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>小球喷射</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #ballBox {
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+            background-color: #000;
+        }
+        #ballBox div {
+            text-align: center;
+            font-family: "微软雅黑";
+            font-weight: bold;
+            color: #fff;
+        }
+        #ballBox button {
+            outline:none;
+            cursor: pointer;
+            border:none;
+            background-color: #fff;
+            height: 50px;
+            position: absolute;
+            padding: 0 10px;
+            top: 20px;
+            left: 50%;
+            font: 20px "微软雅黑";
+            margin-left: -70px;
+            z-index: 5;
+            user-select: none;
+        }
+        #ballBox button:active {
+            background-color: #bbb;
+        }
+    </style>
+</head>
+<body>
+<div id="ballBox">
+    <button>添加小球(0)</button>
+</div>
+</body>
+<script>
+    var ballBox = document.getElementById("ballBox");
+    var ballBtn = ballBox.getElementsByTagName("button")[0];
+    var div = ballBox.getElementsByTagName("div");
+    var timerX = []; //x方向 定时器
+    var timerY = []; //y方向 定时器
+    var timerXX = []; //x方向碰壁反弹时的定时器
+    var timerYY = []; //y方向碰壁反弹时的定时器
+    var positionX = [];  //设置这个小球的位置的初始的X轴坐标
+    var positionY = [];  //设置这个小球的位置的初始的y轴坐标
+    var boolX = [];  //用来判断小球是否碰到过墙壁，用不用反方向
+    var boolY = [];  //用来判断小球是否碰到过墙壁，用不用反方向
+    var i = []; // 小球碰到墙壁，减速加速时使用
+    var width = [];   //小球碰到墙壁时，每次运行定时器时小球的宽度
+    var height = [];      //小球碰到墙壁时，每次运行定时器时小球的高度
+    var initialW = document.documentElement.clientWidth;  //小球弹跳区域的大小，这里设置的是可视区域
+    var initialH = document.documentElement.clientHeight;  //小球弹跳区域的大小，这里设置的是可视区域
+    ballBox.style.width = initialW + "px";
+    ballBox.style.height = initialH + "px";
+    var num = 0;// 用来记录新生成小球的个数，同时作为小球的索引值
+    var number = [];  //用来记录小球撞过几次墙壁
+    var colorArr = ["0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"]; //用来生成随机颜色
+    ballBtn.onclick = function() {
+        ballBtn.innerHTML = "添加小球("+ (num+1) +")";
+        var color = "";//用来随机生成颜色
+        for (var i = 0; i < 6; i++) {
+            color += colorArr[Math.floor(Math.random()*16)];
+        }
+        var temp = [];  //临时数组，用来放三个随机数
+        do {
+            temp[0] = Math.random()*60;
+        }while(temp[0] < 35)  //生成一个随机数，用来做为小球的直径；
+        do {
+            temp[1] = Math.random()*4;
+        }while(temp[1] < 1)  //生成一个随机数，用来做为小球x方向的步长；
+        do {
+            temp[2] = Math.random()*4;
+        }while(temp[2] < 1)  //生成一个随机数，用来做为小球y方向的步长；
+        var newDiv = document.createElement("div");
+        newDiv.style.position = "absolute";  //设置小球的一系列属性，大小，颜色等等
+        newDiv.style.width = temp[0] + "px";
+        newDiv.style.height = temp[0] + "px";
+        newDiv.style.borderRadius = "50%";
+        newDiv.style.backgroundColor = "#" + color ;
+        newDiv.style.top = 0;
+        newDiv.style.left = 0;
+        newDiv.title = num++;  //设置索引
+        newDiv.style.fontSize = temp[0]/2 + "px";
+        newDiv.style.lineHeight = temp[0] + "px";
+        number[number.length] = 0;
+        newDiv.innerHTML = number[number.length - 1];
+        positionX[positionX.length] = 0;  //设置这个小球的位置的初始的X轴坐标也就是小球出发的位置
+        positionY[positionY.length] = 0;  //设置这个小球的位置的初始的y轴坐标也就是小球出发的位置
+        boolX[boolX.length]= false;  //用来判读小球是否碰到过墙壁，用不用反方向
+        boolY[boolY.length]= false;  //用来判读小球是否碰到过墙壁，用不用反方向
+        ballBox.appendChild(newDiv);
+        timerX[timerX.length] = setInterval("moveX("+temp[0]+","+temp[1]+","+ (div.length-1) +")",10);
+        timerY[timerY.length] = setInterval("moveY("+temp[0]+","+temp[2]+","+ (div.length-1) +")",10);
+    }
+    document.onkeydown = function() {   //按下键盘事件
+        ballBtn.onclick();
+        ballBtn.style.backgroundColor = "#bbb";
+    }
+    document.onkeyup = function() {   //按下键盘事件
+        ballBtn.style.backgroundColor = "#fff";
+    }
+    function moveX(dia,x,index) {      //小球x轴方向的位移函数
+        if (positionX[index]+x > initialW-dia) {  //if用来判断小球是否需要换方向
+            clearInterval(timerX[index]);
+            div[index].style.left = "";
+            div[index].style.right =  "0";
+            i[index] = 0;
+            number[index]++;
+            div[index].innerHTML = number[index];
+            timerXX[index] = setInterval("fn("+x+","+index+ ","+ dia +",'right')",10);
+            return;
+        }
+        if (positionX[index]+x < 0) {  //if用来判断小球是否需要换方向
+            clearInterval(timerX[index]);
+            div[index].style.left = "0";
+            i[index] = 0;
+            number[index]++;
+            div[index].innerHTML = number[index];
+            timerXX[index] = setInterval("fn("+x+","+index+ ","+ dia +",'left')",10);
+            return;
+        }
+        positionX[index] += x;
+        div[index].style.left =  positionX[index] + "px";  //设定此小球距离左端的距离
+    }
+    function moveY(dia,y,index) {      //小球y轴方向的位移函数
+        if (positionY[index]+y > initialH-dia) {  //if用来判断小球是否需要换方向
+            clearInterval(timerY[index]);
+            div[index].style.top = "";
+            div[index].style.bottom =  "0";
+            i[index] = 0;
+            number[index]++;
+            div[index].innerHTML = number[index];
+            timerYY[index] = setInterval("fn("+y+","+index+ ","+ dia +",'bottom')",10);
+            return;
+        }
+        if (positionY[index]+y < 0) {  //if用来判断小球是否需要换方向
+            clearInterval(timerY[index]);
+            div[index].style.top = "0";
+            i[index] = 0;
+            number[index]++;
+            div[index].innerHTML = number[index];
+            timerYY[index] = setInterval("fn("+y+","+index+ ","+ dia +",'top')",10);
+            return;
+        }
+        positionY[index] += y;
+        div[index].style.top =  positionY[index] + "px";   //设定此小球距离顶端的距离
+    }
+    function fn(k,index,dia,direction) {
+        width[index] = div[index].scrollWidth;
+        height[index] = div[index].scrollHeight;
+        k = -k;
+        //  判断是否已经反弹完成，该脱离墙壁了
+        if ( -(Math.abs(k)+i[index]) > Math.abs(k)) {
+            div[index].style.width = dia + "px";        //使宽高均为原始大小
+            div[index].style.height = dia + "px";       //使宽高均为原始大小
+            //判断是左右方向撞墙还是上下方向，需要调用不同的定时器
+            if (direction == "left"||direction == "right") {
+                clearInterval(timerXX[index]);
+                timerX[index] = setInterval("moveX("+dia+","+k+","+ index +")",10);
+                return ;
+            }else {
+                clearInterval(timerYY[index]);
+                timerY[index] = setInterval("moveY("+dia+","+k+","+ index +")",10);
+                return ;
+            }
+        }
+        i[index] -= 0.4;
+        if (direction == "left") {
+            k += i[index];
+            var width2 = width[index] - k;
+            var height2 = height[index] + k;
+        }else if (direction == "right"){
+            k -= i[index];
+            var width2 = width[index] + k;
+            var height2 = height[index] - k;
+        }else if (direction == "top") {
+            k += i[index];
+            var width2 = width[index] + k;
+            var height2 = height[index] - k;
+        }else{
+            k -= i[index];
+            var width2 = width[index] - k;
+            var height2 = height[index] + k;
+        }
+        div[index].style.width = width2 + "px";
+        div[index].style.height = height2 + "px";
+    }
+</script>
+</html>
+
+<!--加速度的定义是△v/△t,这是一般的求法-->
+<!--还有就是利用牛顿第二定律,F=ma,可以先求合外力,再比上质量就是加速度a-->
+<!--还可以利用运动学公式X=1/2at²+v0t或者v²-v0²=2ax求出-->

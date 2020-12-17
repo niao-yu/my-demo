@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <title>拖拽立方体</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      cursor: move;
+    }
+
+    .prompt {
+      position: absolute;
+      width: 0;
+      height: 50px;
+      left: 50px;
+      background-color: #444444;
+      color: #fff;
+      font-size: 30px;
+      line-height: 50px;
+      user-select: none;
+      text-indent: 10px;
+      animation: aa 4s linear;
+      overflow: hidden;
+    }
+
+    @keyframes aa {
+      0% {
+        width: 0;
+      }
+
+      10% {
+        width: 0;
+      }
+
+      20% {
+        width: 300px;
+      }
+
+      60% {
+        width: 300px;
+      }
+
+      100% {
+        width: 0;
+      }
+    }
+
+    .big {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 150px auto 0;
+      transform-style: preserve-3D;
+
+    }
+
+    .big div {
+      width: 300px;
+      height: 300px;
+      position: absolute;
+      font-size: 200px;
+      text-align: center;
+      line-height: 300px;
+      color: #fff;
+      border: 1px solid #a1a1a1;
+      background-color: rgba(0, 0, 0, .6)
+    }
+
+    .big div ul {
+      width: 300px;
+      height: 300px;
+    }
+
+    .big div li {
+      float: left;
+      width: 80px;
+      height: 80px;
+      border-radius: 30%;
+      margin: 10px;
+      list-style: none;
+      font-size: 50px;
+      text-align: center;
+      line-height: 80px;
+      user-select: none;
+    }
+
+    .after {
+      transform: rotateY(180deg) translateZ(150px);
+    }
+
+    .after li {
+      background-color: #a8a714;
+      opacity: 0.9;
+
+    }
+
+    .before {
+      transform: translateZ(150px);
+    }
+
+    .before li {
+      background-color: #4a51ff;
+      opacity: 0.9;
+
+    }
+
+    .left {
+      transform: rotateY(-90deg) translateZ(150px);
+    }
+
+    .left li {
+      background-color: #a9f;
+      opacity: 0.9;
+    }
+
+    .right {
+      transform: rotateY(90deg) translateZ(150px);
+    }
+
+    .right li {
+      background-color: #ae8;
+      opacity: 0.9;
+
+    }
+
+    .top {
+      transform: rotateX(90deg) translateZ(150px);
+    }
+
+    .top li {
+      background-color: #5beec8;
+      opacity: 0.9;
+
+    }
+
+    .bottom {
+      transform: rotateX(-90deg) translateZ(150px);
+    }
+
+    .bottom li {
+      background-color: #ee8f8d;
+      opacity: 0.9;
+
+    }
+  </style>
+  <script>
+    window.onload = function () {
+      var big = document.querySelector(".big");
+      var theX = 0;  //用来记录x和y轴的角度，每次拖动完毕后更新
+      var theY = 0;  // （接上一行）这样就不用了每次想办法获取角度了
+      var xx;  //下面用来保存鼠标拖动时的x轴向位置
+      var yy;  //下面用来保存鼠标拖动时的y轴向位置
+      // 鼠标按下
+      document.onmousedown = function (event) {
+        // 获取点击时，鼠标的x和y轴坐标
+        var x = event.pageX;
+        var y = event.pageY;
+        //获取拖动前，盒子的x和y轴角度，用来累加角度
+        var xxx = theX;
+        var yyy = theY;
+        // 鼠标按下时移动，就是拖动
+        document.onmousemove = function (e) {
+          //实时获取鼠标x和y轴的位置
+          xx = e.pageX;
+          yy = e.pageY;
+          //   一个判断，比如盒子转了180度，此时旋转的角度需要相反一下，看着才是正常的。。。可以去掉语句，改成和下面一条的一样的样子试试
+          //而且X轴不知道为什么是固定的，所以X轴的不用管
+          var tempY = Math.abs(yyy) % 360;
+          if (0 <= tempY && tempY < 90 || 270 < tempY && tempY < 360) {
+            xx = xxx + (xx - x) / 2;
+          }
+          else {
+            // 计算实时的角度
+            xx = xxx - (xx - x) / 2;
+          }
+          //                    var tempX = Math.abs(xxx)%360;
+          //                    if ( 0 <= tempX && tempX < 90 || 270 < tempX && tempX < 360) {
+          //                        yy = yyy - (yy - y)/2;
+          //                    }
+          //                    else {
+          // 计算实时的角度
+          yy = yyy - (yy - y) / 2;
+          //                    }
+          //给CSS赋值角度
+          big.style.transition = "all 500ms ease-out";
+          big.style.transform = "rotateX(" + yy + "deg) rotateY(" + xx + "deg )";
+        }
+      }
+      //鼠标弹起事件
+      document.onmouseup = function () {
+        document.onmousemove = null;
+        // 更新盒子此时的角度，用于下一次拖动累加
+        theX = xx;
+        theY = yy;
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div class="prompt">可使用鼠标拖拽旋转</div>
+  <div class="big">
+    <div class="after">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div class="left">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div class="right">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div class="top">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div class="bottom">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div class="before">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+  </div>
+</body>
+<script>
+  var uls = document.getElementsByTagName("ul");
+  for (var i = 0; i < uls.length; i++) {
+    var lis = uls[i].getElementsByTagName("li");
+    for (var j = 0; j < lis.length; j++) {
+      lis[j].innerHTML = j + 1;
+    }
+  }
+</script>
+
+</html>

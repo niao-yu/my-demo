@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>一个banner切换效果</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        .big {
+            width: 560px;
+            height: 300px;
+            margin: 150px auto 0;
+            background-color: #eee;
+            position: relative;
+        }
+        .big ul {
+            width: 100%;
+            height: 100%;
+            /*transform: rotateX(10deg) rotateY(10deg) rotateX(10deg);*/
+            transform-style: preserve-3D;
+            display: flex;
+        }
+        .big > span {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background-color: rgba(0,0,0,.5);
+            color: #fff;
+            top: 50%;
+            margin-top: -20px;
+            text-align: center;
+            line-height: 40px;
+            cursor: pointer;
+        }
+        .big .left {
+            left:0;
+        }
+        .big .right {
+            right:0;
+        }
+        .big li {
+            width: 100%;
+            height: 100%;
+            list-style: none;
+            position: relative;
+            transform-style: preserve-3D;
+        }
+        .big li span {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .big li span:nth-child(1) {
+            background-image: url("img/1.jpg");
+            transform: translateZ(150px);
+        }
+        .big li span:nth-child(2) {
+            background-image: url("img/2.jpg");
+            transform: rotateX(90deg) translateZ(150px);
+        }
+        .big li span:nth-child(3) {
+            background-image: url("img/3.jpg");
+            transform: rotateX(180deg) translateZ(150px);
+        }
+        .big li span:nth-child(4) {
+            background-image: url("img/4.jpg");
+            transform: rotateX(270deg) translateZ(150px);
+        }
+        .big li:nth-child(2) span {
+            background-position: -112px;
+        }
+        .big li:nth-child(3) span {
+            background-position: -224px;
+        }
+        .big li:nth-child(4) span {
+            background-position: -336px;
+        }
+        .big li:nth-child(5) span {
+            background-position: -448px;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            //左侧按钮
+            var left = document.querySelector(".left");
+            //右侧按钮
+            var right = document.querySelector(".right");
+            //所有的li标签，其实一共只有5个
+            var lis = document.querySelectorAll("li");
+            var n = 0;
+            //bool用来做一个开关，当有动画执行的时候，使按钮失效，待动画完毕之后，按钮才可以再次使用，才可以再次执行切换动画
+            var bool = false;
+//            左侧按钮绑定事件
+            left.onclick = function(){
+                //判断bool是否为true，是的话，说明有动画再执行，直接return，切断程序
+                if (bool) {
+                    return;
+                }
+                //把bool设为true，表示动画在执行中
+                bool = true;
+                //n为li沿X轴旋转的角度，下面n*90 ，表示转90度的倍数，
+                n++;
+                for (var i = 0;i < lis.length; i++) {
+//                    让5个li标签依次旋转，按位置顺序设置延时，下面right同理
+                    lis[i].style.transform = "rotateX(" + n*90 + "deg)";
+                    lis[i].style.transition = "all 800ms " + i*0.1 + "s" ;
+                }
+            }
+//            右侧按钮绑定事件
+            right.onclick = function(){
+                if (bool) {
+                    return;
+                }
+                bool = true;
+                n--;
+                for (var i = 0;i < lis.length; i++) {
+                    lis[i].style.transform = "rotateX(" + n*90 + "deg)";
+                    lis[i].style.transition = "all 800ms " + i*0.1 + "s";
+                }
+            }
+            //获取最后一个li
+            var lastLi = document.querySelector("li:last-child");
+            //添加监视，当最后一个li的动画执行完毕，把bool改为false，使可以再次执行程序。
+            lastLi.addEventListener("webkitTransitionEnd",function(){
+                bool = false;
+            })
+        }
+    </script>
+</head>
+<body>
+<div class="big">
+    <ul>
+        <li>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </li>
+        <li>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </li>
+        <li>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </li>
+        <li>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </li>
+        <li>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </li>
+    </ul>
+    <span class="left"><</span>
+    <span class="right">></span>
+</div>
+</body>
+</html>

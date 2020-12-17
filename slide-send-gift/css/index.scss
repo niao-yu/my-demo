@@ -1,0 +1,296 @@
+@mixin someone-msg() {
+  padding: .3rem .4rem 0;
+  // background-color: #eee;
+  .user-img {
+    width: 1.4rem;
+    height: 1.4rem;
+    // border: .01rem solid #aaa;
+    box-shadow: inset 0 0 0 1px #aaa;
+    border-radius: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  .user-msg {
+    table {
+      width: 4rem;
+      tr {
+        // border: .01rem solid #fff;
+        td:nth-child(2n-1) {
+          text-align: right;
+          padding-right: .1rem;
+          width: 40%;
+        }
+        td {
+          font-size: .26rem;
+        }
+      }
+    }
+  }
+}
+@mixin gift-img() {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 1.4rem;
+  height: 1.4rem;
+  box-shadow: inset 0 0 0px 1px #aaa;
+  line-height: 1.4rem;
+  border-radius: 20%;
+  margin: 0 auto;
+  text-align: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  &.index-1 {
+    background-image: url('../img/hua.jpg');
+  }
+  &.index-2 {
+    background-image: url('../img/dabian.png');
+  }
+  &.index-3 {
+    background-image: url('../img/xishuai.png');
+  }
+  .disabled {
+    border-radius: 20%;
+  }
+}
+.moving {
+  @include gift-img();
+}
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: #EAEEF1;
+}
+.success {
+  background-color: #D8E3F2;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.hide {
+  display: none;
+}
+.index {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  .line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    transform: translateY(-50%);
+    height: .02rem;
+    background-color: #000;
+  }
+  > div {
+    height: 50%;
+    position: relative;
+    > div {
+      text-align: center;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      .iconfont {
+        font-size: 1rem;
+      }
+      p {
+        font-size: .4rem;
+      }
+    }
+    .qr-code {
+      bottom: 1rem;
+    }
+    .scan {
+      top: 1rem;
+    }
+  }
+  > span {
+    position: absolute;
+    width: 100%;
+    height: 1rem;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    line-height: 1rem;
+    font-size: .4rem;
+    background-color: rgb(209, 223, 228);
+  }
+}
+.room {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  > div {
+    position: absolute;
+    left: 0;
+    width: 100%;
+  }
+  .other {
+    top: -6.4rem;
+    height: 6.4rem;
+    background-color: #fff;
+    border-radius: 0 0 .4rem .4rem;
+    overflow: hidden;
+    .wait-join {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 100%;
+      transform: translateX(-50%);
+      p {
+        text-align: center;
+        font-size: .3rem;
+      }
+      p.code {
+        padding: .4rem 0 .3rem;
+      }
+      p.tip {
+        padding-top: .3rem;
+        font-size: .1rem;
+        span {
+          font-size: .1rem;
+        }
+      }
+      div.qr-code {
+        width: 4rem;
+        height: 4rem;
+        box-shadow: inset 0 0 0 1px #aaa;
+        border-radius: .4rem;
+        margin: 0 auto;
+      }
+    }
+    span.slide-close {
+      position: absolute;
+      border: .4rem solid #000;
+      border-color: transparent transparent #999 transparent;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      i {
+        position: absolute;
+        left: 50%;
+        color: #fff;
+        top: .12rem;
+        font-size: .2rem;
+        transform: translateX(-50%);
+      }
+    }
+    .other-msg {
+      @include someone-msg();
+      position: absolute;
+      bottom: -5rem;
+      width: 100%;
+      .user-img {
+        background-image: url('../img/11.jpg');
+      }
+    }
+  }
+  .user {
+    bottom: -5.8rem;
+    position: fixed;
+    height: 5.8rem;
+    background-color: #fff;
+    border-radius: .4rem .4rem 0 0;
+    .my-gift {
+      width: 100%;
+      height: 3rem;
+      display: flex;
+      .item {
+        flex-grow: 1;
+        padding-top: .4rem;
+        overflow: hidden;
+        .gift-img {
+          @include gift-img();
+          .disabled {
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,.3);
+            opacity: 0;
+          }
+        }
+        p {
+          padding-top: .2rem;
+          font-size: .3rem;
+          text-align: center;
+        }
+      }
+
+    }
+    .inputs {
+      $height : .6rem;
+      $width : 7rem;
+      width: $width;
+      height: $height;
+      margin: 0 auto;
+      input {
+        width: $width*.78;
+        border: none;
+        outline: none;
+        height: 100%;
+        border-radius: 0;
+        background-color: #eee;
+        padding: 0 0 0 $width*.02;
+        color: #333;
+      }
+      span.send {
+        line-height: $height;
+        width: $width*.2;
+        text-align: center; 
+        height: 100%;
+        font-size: .32rem;
+        background-color: #52ADE7;
+        border-radius: 0 .1rem .1rem 0;
+        color: #fff;
+      }
+    }
+    .my-msg {
+      @include someone-msg();
+      .user-img {
+        background-image: url('../img/22.jpg');
+      }
+    }
+  }
+}
+.scan-tip {
+  padding-top: 2rem;
+  p {
+    text-align: center;
+    font-size: .4rem;
+    line-height: .8rem;
+  }
+  > span {
+    display: block;
+    text-align: center;
+  }
+  div {
+    padding-top: 1rem;
+    width: 6rem;
+    margin: 0 auto;
+    input {
+      width: 4.8rem;
+      height: .8rem;
+      font-size: .4rem;
+      padding-left: .2rem;
+    }
+    span {
+      width: 1rem;
+      height: .8rem;
+      line-height: .8rem;
+      font-size: .4rem;
+      text-align: center;
+      background-color: #999;
+      color: #fff;
+    }
+  }
+}

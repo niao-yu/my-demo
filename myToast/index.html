@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>个人封装 toast</title>
+  <style>
+    html, body{
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .btns > div {
+      width: 100px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      border: 1px solid #999;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btns > div:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="btns">
+    <div class="info">消息</div>
+    <div class="warn">警告</div>
+    <div class="error">错误</div>
+  </div>
+</body>
+<script src="./assets/jquery-3.3.1.min.js"></script>
+<script src="./toast.js"></script>
+<script>
+  $('.info').on('click', function() {
+    toast({
+      type: '',
+      message: '这是一些消息'
+    })
+  })
+  $('.warn').on('click', function() {
+    toast({
+      type: 'warn',
+      message: '这是一些警告'
+    })
+  })
+  $('.error').on('click', function() {
+    toast({
+      type: 'error',
+      message: '<p>这是一些错误，可能会很多很多很多</p><p>很多</p><p>真的很多</p><p>真的挺多的</p>'
+    })
+  })
+</script>
+</html>

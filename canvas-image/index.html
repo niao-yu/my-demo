@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>读取图片,用canvas拼接(移动端)</title>
+  <style>
+    html, body, div, input, img {
+      padding: 0;
+      margin: 0;
+    }
+    body > div:nth-last-child(1), body > div:nth-last-child(2) {
+      display: none;
+    }
+    .btn .change, .down {
+      font-size: 14px;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 4px;
+      width: 120px;
+      height: 1.6em;
+      margin: 0 auto;
+      text-align: center;
+      line-height: 1.6em;
+      position: fixed;
+      bottom: 20px;
+      color: #ffffff;
+      background-color: rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+    .btn .change {
+      left: 20px
+    }
+    .btn .down {
+      right: 20px;
+    }
+    .img {
+      width: 100%;
+    }
+    .img img {
+      width: 100%;
+    }
+    input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="btn">
+    <div id="change" onclick="document.querySelector('#choose').click()" class="change">点击替换logo</div>
+    <div id="down" class="down">请长按图片下载</div>
+  </div>
+  <div class="img">
+    <img id="img" onload="imgLoad()" src="./imgs/img.png" alt="">
+  </div>
+  <input type="file" id="choose" accept="image/*">
+</body>
+</html>
+<script>
+  var imgWidth, imgHeight
+  // 图片第一次刚加载完成，获取图片原始长宽备用
+  var imgLoad = function () {
+    imgWidth = document.querySelector('#img').naturalWidth;
+    imgHeight = document.querySelector('#img').naturalHeight;
+  }
+  window.onload = function () {
+    // 获取dom备用
+    var change = document.querySelector('#change')
+    var choose = document.querySelector('#choose')
+    var down = document.querySelector('#down')
+    var img = document.querySelector('#img')
+    var newImg = new Image
+    var oldImg = new Image
+    oldImg.src = img.src // 留存初始的图片，作为每次拼接的基础图
+
+    // 上传OK, 且图片准备完毕, 开始拼接
+    function upSuccess(newImg) {
+      var c = document.createElement('canvas'), ctx = c.getContext('2d')
+      c.width = imgWidth; // 宽高等于原图宽高
+      c.height = imgHeight; // 宽高等于原图宽高
+      ctx.rect(0, 0, c.width, c.height); // 画出基图
+      ctx.fillStyle = '#fff';
+      ctx.fill(); // 填充
+      ctx.drawImage(oldImg, 0, 0, imgWidth, imgHeight); // 画成第一张图 // 大图
+      var naturalWidth = newImg.naturalWidth
+      var naturalHeight = newImg.naturalHeight
+      if (naturalWidth / imgWidth > 0.5 || naturalHeight / imgHeight > 0.2) { // 如果对方图片长或宽,  超过原图对应尺寸的10%
+        if (naturalHeight * (imgWidth * 0.5) / naturalWidth <= imgHeight * 0.2) {
+          naturalHeight = naturalHeight * (imgWidth * 0.5) / naturalWidth
+          naturalWidth = imgWidth * 0.5
+        } else {
+          naturalWidth = naturalWidth * (imgHeight * 0.2) / naturalHeight
+          naturalHeight = imgHeight * 0.2
+        }
+      }
+      ctx.drawImage(newImg, (imgWidth - naturalWidth) / 2, (imgHeight - naturalHeight - 100), naturalWidth, naturalHeight); // 画第二张
+      img.src = c.toDataURL("image/jpeg", 1)
+    }
+    // 刚刚上传OK, 开始加载图片准备
+    choose.onchange = function () {
+      var file = this.files[0]
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function (result) {
+        newImg.src = this.result
+        newImg.onload = function () {
+          upSuccess(newImg)
+        }
+      }
+    }
+  }
+</script>
