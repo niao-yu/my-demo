@@ -22,7 +22,7 @@ window.toast = obj => {
     'position': 'fixed',
     'top': '10%',
     'left': '50%',
-    'width': '100%',
+    'width': 'max-content',
     'transform': 'translateX(-50%)',
     'display': 'none',
     'justify-content': 'center',
